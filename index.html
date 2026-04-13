@@ -1,0 +1,134 @@
+
+    <script src='https://cdn.tailwindcss.com'></script>
+    <style>
+      @keyframes pulse-slow { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.6; } }
+      .glass-effect { backdrop-filter: blur(12px); transition: all 0.3s ease; }
+      .dark .glass-effect { background: rgba(15, 23, 42, 0.8); border-color: rgba(51, 65, 85, 0.5); }
+      .light .glass-effect { background: rgba(255, 255, 255, 0.8); border-color: rgba(226, 232, 240, 0.8); }
+      .timeline-path { background: linear-gradient(to bottom, transparent, #06b6d4 10%, #d946ef 90%, transparent); }
+      .highlight-zone { transition: all 0.4s ease; }
+      .group:hover .highlight-zone { background: rgba(6, 182, 212, 0.05); border-radius: 1rem; padding: 0.5rem; box-shadow: 0 0 20px rgba(6, 182, 212, 0.1); }
+      body { transition: background-color 0.3s ease, color 0.3s ease; }
+    </style>
+
+    <div id='themeWrapper' class='dark'>
+      <div class='p-8 bg-[#020617] dark:bg-[#020617] light:bg-slate-50 text-slate-200 dark:text-slate-200 light:text-slate-800 min-h-screen font-sans selection:bg-cyan-500/30 relative overflow-hidden' id='mainContainer'>
+          <div class='absolute inset-0 z-0 pointer-events-none'>
+              <div class='absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-cyan-500/10 blur-[120px] rounded-full animate-pulse'></div>
+              <div class='absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-fuchsia-500/10 blur-[120px] rounded-full animate-pulse' style='animation-delay: 2s;'></div>
+          </div>
+
+          <div class='max-w-6xl mx-auto relative z-10'>
+              <div class='flex justify-end mb-4'>
+                  <button id='themeToggle' class='glass-effect border p-3 rounded-2xl flex items-center gap-2 hover:scale-105 transition-all'>
+                      <span id='themeIcon'>🌙</span> <span class='text-xs font-bold uppercase tracking-widest'>Toggle Theme</span>
+                  </button>
+              </div>
+
+              <header class='text-center mb-16'>
+                  <h1 class='text-7xl font-black mb-4 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-fuchsia-500 tracking-tighter'>
+                      GPT Evolution
+                  </h1>
+                  <p class='text-slate-400 dark:text-slate-400 light:text-slate-500 text-xl font-light tracking-wide mb-8'>Tracing the Architectural Ancestry of Modern AI</p>
+                  <div id='statsBar' class='flex justify-center gap-8 py-4 border-y border-slate-800/50 dark:border-slate-800/50 light:border-slate-200 mb-12'></div>
+              </header>
+
+              <div class='sticky top-6 z-50 mb-12'>
+                  <div class='glass-effect border p-3 rounded-3xl shadow-2xl flex flex-col md:flex-row gap-3'>
+                      <input type='text' id='searchBar' placeholder='Search innovations...' class='flex-1 bg-slate-900/80 dark:bg-slate-900/80 light:bg-white/80 border border-slate-700 dark:border-slate-700 light:border-slate-200 p-4 rounded-2xl outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all'>
+                      <select id='categorySelect' class='bg-slate-900/80 dark:bg-slate-900/80 light:bg-white/80 border border-slate-700 dark:border-slate-700 light:border-slate-200 p-4 rounded-2xl outline-none cursor-pointer'>
+                          <option value='all'>All Categories</option>
+                          <option value='Attention'>Attention</option>
+                          <option value='RLHF'>RLHF</option>
+                          <option value='GPT'>GPT</option>
+                          <option value='Tooling'>Tooling</option>
+                      </select>
+                  </div>
+              </div>
+
+              <div class='relative'>
+                  <div class='absolute left-4 md:left-1/2 top-0 bottom-0 w-1 timeline-path md:-translate-x-1/2 opacity-30'></div>
+                  <div id='timelineRoot' class='space-y-24'></div>
+              </div>
+          </div>
+      </div>
+    </div>
+
+    <script>
+    (function() {
+        const data = [{"year": 2014, "title": "Neural Machine Translation by Jointly Learning to Align and Translate", "description": "Introduction of the first attention mechanism to overcome the bottleneck of fixed-length vectors in encoder-decoder architectures.", "impact": "Revolutionized machine translation by allowing the model to focus on specific parts of the input sequence, laying the groundwork for all future attention-based models.", "innovation": "Introduced the 'Alignment' mechanism (additive attention), allowing models to search for relevant parts of a source sentence.", "paper_link": "https://arxiv.org/abs/1409.0473", "category": "Attention"}, {"year": 2017, "title": "Attention Is All You Need", "description": "Introduction of the Transformer architecture, which entirely replaces recurrence and convolutions with self-attention mechanisms.", "impact": "Became the foundational architecture for nearly all modern Large Language Models (LLMs), enabling massive parallelization.", "innovation": "Self-attention and Multi-head attention mechanisms that allow for global dependencies regardless of distance in the text.", "paper_link": "https://arxiv.org/abs/1706.03762", "category": "Attention"}, {"year": 2018, "title": "Improving Language Understanding by Generative Pre-Training (GPT-1)", "description": "The birth of the GPT series, focusing on using a Transformer decoder for unsupervised generative pre-training followed by supervised fine-tuning.", "impact": "Demonstrated that generative pre-training on a large corpus could generalize to a wide variety of downstream NLP tasks.", "innovation": "Shifted the paradigm from task-specific architectures to a unified generative backbone that generalizes across tasks.", "paper_link": "https://openai.com/research/language-unsupervised", "category": "GPT"}, {"year": 2020, "title": "Language Models are Few-Shot Learners (GPT-3)", "description": "Scaling language models to 175 billion parameters, demonstrating that massive scale enables the model to perform tasks with very few examples (few-shot).", "impact": "Proved that 'scale' is a primary driver of intelligence and capability in LLMs, leading to the current AI boom.", "innovation": "In-context learning; the ability of the model to follow instructions and patterns without needing further weight updates/fine-tuning.", "paper_link": "https://arxiv.org/abs/2005.14165", "category": "GPT"}, {"year": 2021, "title": "LoRA: Low-Rank Adaptation of Large Language Models", "description": "A tooling technique that allows for efficient fine-tuning of massive models by only updating a small subset of parameters.", "impact": "Democratized the ability to fine-tune LLMs, allowing developers to adapt models like GPT-3 or Llama on consumer-grade hardware.", "innovation": "Freezes the pre-trained model weights and injects trainable low-rank matrices into the Transformer layers to reduce the number of trainable parameters by 10,000x.", "paper_link": "https://arxiv.org/abs/2106.09685", "category": "Tooling"}, {"year": 2022, "title": "Training language models to follow instructions with human feedback (InstructGPT)", "description": "The application of Reinforcement Learning from Human Feedback (RLHF) to align LLMs with human intent and safety guidelines.", "impact": "Transformed LLMs from simple text completers into helpful assistants (like ChatGPT), significantly reducing toxic or irrelevant outputs.", "innovation": "Utilized a reward model trained on human preferences to fine-tune the LLM using the PPO algorithm.", "paper_link": "https://arxiv.org/abs/2203.02155", "category": "RLHF"}, {"year": 2023, "title": "Toolformer: Language Models Can Teach Themselves to Use Tools", "description": "A model trained to decide which external tools (search engines, calculators, etc.) to call, when to call them, and how to use the results.", "impact": "Moved LLMs toward 'Agentic' behavior, overcoming inherent weaknesses like mathematical accuracy and real-time knowledge.", "innovation": "A self-supervised approach where the model learns to insert API calls into text sequences autonomously.", "paper_link": "https://arxiv.org/abs/2302.04761", "category": "Tooling"}];
+        const root = document.getElementById('timelineRoot');
+        const statsBar = document.getElementById('statsBar');
+        const themeWrapper = document.getElementById('themeWrapper');
+        const mainContainer = document.getElementById('mainContainer');
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+
+        const colorMap = { 'Attention': 'cyan', 'GPT': 'emerald', 'RLHF': 'amber', 'Tooling': 'fuchsia' };
+
+        themeToggle.addEventListener('click', () => {
+            const isDark = themeWrapper.classList.contains('dark');
+            themeWrapper.classList.toggle('dark', !isDark);
+            themeWrapper.classList.toggle('light', isDark);
+            themeIcon.innerText = isDark ? '☀️' : '🌙';
+            mainContainer.style.backgroundColor = isDark ? '#f8fafc' : '#020617';
+            mainContainer.style.color = isDark ? '#1e293b' : '#f1f5f9';
+        });
+
+        function updateStats(items) {
+            const cats = [...new Set(items.map(i => i.category))];
+            statsBar.innerHTML = `
+                <div class='text-center'><span class='block text-2xl font-bold'>${items.length}</span><span class='text-[10px] uppercase opacity-50'>Milestones</span></div>
+                <div class='w-px h-8 bg-slate-800 dark:bg-slate-800 light:bg-slate-200'></div>
+                <div class='text-center'><span class='block text-2xl font-bold'>${cats.length}</span><span class='text-[10px] uppercase opacity-50'>Eras</span></div>
+                <div class='w-px h-8 bg-slate-800 dark:bg-slate-800 light:bg-slate-200'></div>
+                <div class='text-center'><span class='block text-2xl font-bold'>${items.length > 0 ? items[items.length-1].year - items[0].year : 0}+</span><span class='text-[10px] uppercase opacity-50'>Year Span</span></div>
+            `;
+        }
+
+        function render(items) {
+            root.innerHTML = '';
+            if (items.length === 0) return;
+            updateStats(items);
+            items.forEach((item, i) => {
+                const color = colorMap[item.category] || 'slate';
+                const isEven = i % 2 === 0;
+                const entry = document.createElement('div');
+                entry.className = "relative flex flex-col md:flex-row items-center gap-12 " + (isEven ? "md:flex-row-reverse" : "");
+                entry.innerHTML = `
+                    <div class='absolute left-4 md:left-1/2 w-6 h-6 rounded-full bg-${color}-500 shadow-[0_0_30px_rgba(6,182,212,0.6)] z-20 md:-translate-x-1/2 border-4 border-[#020617] dark:border-[#020617] light:border-white'></div>
+                    <div class='flex-1 w-full ml-12 md:ml-0'>
+                        <div class='glass-effect border p-8 rounded-[2.5rem] hover:scale-[1.01] hover:border-${color}-500/50 transition-all duration-500 shadow-2xl group'>
+                            <div class='flex justify-between items-center mb-6'>
+                                <span class='text-6xl font-black opacity-20 group-hover:text-${color}-500 transition-colors'>${item.year}</span>
+                                <span class='px-4 py-1 rounded-full bg-${color}-500/10 text-${color}-400 text-xs font-bold uppercase'>${item.category}</span>
+                            </div>
+                            <h3 class='text-3xl font-bold mb-4'>${item.title}</h3>
+                            <p class='opacity-70 text-lg mb-6'>${item.description}</p>
+                            <div class='space-y-4 pt-4 border-t border-slate-800 dark:border-slate-800 light:border-slate-200 highlight-zone'>
+                                <p class='text-sm leading-relaxed'><strong class='text-${color}-500'>Impact:</strong> ${item.impact || 'N/A'}</p>
+                                <p class='text-sm leading-relaxed'><strong class='text-${color}-500'>Innovation:</strong> ${item.innovation || 'N/A'}</p>
+                                ${item.paper_link ? `<a href="${item.paper_link}" target="_blank" class="inline-flex items-center mt-4 px-6 py-2 rounded-xl bg-${color}-500/10 border border-${color}-500/20 text-${color}-500 text-sm hover:bg-${color}-500/20 transition-all font-bold">Read Research Paper <span class='ml-2 text-lg'>→</span></a>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <div class='hidden md:block flex-1'></div>
+                `;
+                root.appendChild(entry);
+            });
+        }
+
+        document.getElementById('searchBar').addEventListener('input', (e) => {
+            const q = e.target.value.toLowerCase();
+            render(data.filter(d => d.title.toLowerCase().includes(q) || d.description.toLowerCase().includes(q)));
+        });
+
+        document.getElementById('categorySelect').addEventListener('change', (e) => {
+            const cat = e.target.value;
+            render(cat === 'all' ? data : data.filter(d => d.category === cat));
+        });
+
+        render(data);
+    })();
+    </script>
+    
